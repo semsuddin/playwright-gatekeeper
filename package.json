@@ -1,0 +1,25 @@
+{
+  "name": "playwright-dependency-orchestration",
+  "version": "1.0.0",
+  "description": "Dependency-aware test orchestration layer for Playwright",
+  "main": "src/orchestration/index.ts",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:ui": "playwright test --ui"
+  },
+  "keywords": [
+    "playwright",
+    "testing",
+    "e2e",
+    "orchestration",
+    "dependencies"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^22.10.1",
+    "typescript": "^5.7.2"
+  }
+}
