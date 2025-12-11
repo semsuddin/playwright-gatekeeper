@@ -1,4 +1,7 @@
-# Dependency-Aware Test Orchestration for Playwright
+# Playwright Gatekeeper
+
+[![npm version](https://img.shields.io/npm/v/playwright-gatekeeper.svg)](https://www.npmjs.com/package/playwright-gatekeeper)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A lightweight orchestration layer that allows Playwright tests to declare dependencies on "gatekeeper" tests. When a gatekeeper fails, all dependent tests are automatically skipped with clear reporting.
 
@@ -16,17 +19,35 @@ This orchestration layer solves these problems by:
 
 ---
 
-## Quick Start
+## Installation
 
 ```bash
-# Install dependencies
-npm install
+npm install playwright-gatekeeper
+```
 
-# Install Playwright browsers
-npx playwright install
+The package uses `@playwright/test` as a peer dependency, so it will work with whatever Playwright version you have installed (>=1.40.0).
 
-# Run tests
-npm test
+---
+
+## Setup
+
+Add the global setup and reporter to your `playwright.config.ts`:
+
+```typescript
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  // Initialize gatekeeper state before tests run
+  globalSetup: require.resolve('playwright-gatekeeper/setup'),
+
+  // Add the dependency reporter (alongside default reporters)
+  reporter: [
+    ['list'],
+    ['playwright-gatekeeper/reporter'],
+  ],
+
+  // Your other config...
+});
 ```
 
 ---
@@ -38,7 +59,7 @@ npm test
 A **gatekeeper** is a critical test that other tests depend on. Mark it with `markAs()`:
 
 ```typescript
-import { trackedTest as test, expect, markAs } from '../../src/orchestration';
+import { test, expect, markAs } from 'playwright-gatekeeper';
 
 test('Authentication works', async ({ page }) => {
   markAs('auth');  // Register this test as the 'auth' gatekeeper
@@ -56,7 +77,7 @@ test('Authentication works', async ({ page }) => {
 Use `await dependsOn()` to declare dependencies. The test will **wait** for its gatekeepers to complete, then skip if any failed:
 
 ```typescript
-import { trackedTest as test, expect, dependsOn } from '../../src/orchestration';
+import { test, expect, dependsOn } from 'playwright-gatekeeper';
 
 test('Dashboard shows user data', async ({ page }) => {
   await dependsOn('auth');  // Wait for 'auth', skip if it failed
@@ -162,24 +183,6 @@ Running 11 tests using 7 workers
 
 ---
 
-## File Structure
-
-```
-├── playwright.config.ts           # Playwright configuration
-├── src/orchestration/
-│   ├── index.ts                   # Public API exports
-│   ├── testContext.ts             # State management with file locking
-│   ├── helpers.ts                 # markAs(), dependsOn()
-│   ├── fixtures.ts                # trackedTest fixture
-│   ├── globalSetup.ts             # Initializes state before tests
-│   └── reporter.ts                # Custom summary reporter
-└── tests/example/
-    ├── 00-gatekeepers.spec.ts     # Example gatekeeper tests
-    └── 01-features.spec.ts        # Example dependent tests
-```
-
----
-
 ## API Reference
 
 ### `markAs(key: string, dependencies?: string[])`
@@ -200,8 +203,6 @@ await dependsOn('auth');              // Single dependency
 await dependsOn('auth', 'api', 'db'); // Multiple dependencies
 ```
 
----
-
 ## Configuration
 
 The orchestration uses these files (auto-created, gitignored):
@@ -213,25 +214,39 @@ Default timeout for `dependsOn()` is 30 seconds. Override with:
 await dependsOn('slow-gatekeeper', 60000);  // 60 second timeout
 ```
 
----
-
-## Demo
-
-To demonstrate the skip behavior:
-
-1. The example includes an intentionally failing gatekeeper (`will-fail`)
-2. Run `npm test` and observe:
-   - The failing gatekeeper shows as ✘
-   - Dependent tests show as - (skipped)
-   - Summary shows why tests were skipped
-
-To test with all passing:
-
-```typescript
-// In tests/example/00-gatekeepers.spec.ts, comment out:
-// test('Intentionally failing gatekeeper', ...)
+Add to your `.gitignore`:
+```
+.playwright-gatekeeper-state.json
+.playwright-gatekeeper-state.json.tmp.*
+.playwright-gatekeeper-state.lock
 ```
 
 ---
 
-[![GitHub](https://img.shields.io/badge/GitHub-semsuddin-181717?logo=github)](https://github.com/semsuddin)
+## Using with trackedTest
+
+For automatic result tracking, use `trackedTest` instead of `test`:
+
+```typescript
+import { trackedTest as test, markAs, dependsOn } from 'playwright-gatekeeper';
+
+// Results are automatically recorded when the test completes
+test('Auth works', async ({ page }) => {
+  markAs('auth');
+  // ...
+});
+```
+
+---
+
+## License
+
+MIT
+
+---
+
+<sub>
+
+Designed and developed by [![GitHub](https://img.shields.io/badge/GitHub-semsuddin-181717?logo=github&style=flat-square)](https://github.com/semsuddin)
+
+</sub>

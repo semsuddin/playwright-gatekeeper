@@ -1,9 +1,29 @@
 {
-  "name": "playwright-dependency-orchestration",
+  "name": "playwright-gatekeeper",
   "version": "1.0.0",
-  "description": "Dependency-aware test orchestration layer for Playwright",
-  "main": "src/orchestration/index.ts",
+  "description": "Dependency-aware test orchestration layer for Playwright - skip tests when prerequisites fail",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./reporter": {
+      "types": "./dist/reporter.d.ts",
+      "default": "./dist/reporter.js"
+    },
+    "./setup": {
+      "types": "./dist/globalSetup.d.ts",
+      "default": "./dist/globalSetup.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run build",
     "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
@@ -14,9 +34,23 @@
     "testing",
     "e2e",
     "orchestration",
-    "dependencies"
+    "dependencies",
+    "gatekeeper",
+    "test-dependencies"
   ],
+  "author": "Semsudin Sefic",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/semsuddin/playwright-gatekeeper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/semsuddin/playwright-gatekeeper/issues"
+  },
+  "homepage": "https://github.com/semsuddin/playwright-gatekeeper#readme",
+  "peerDependencies": {
+    "@playwright/test": ">=1.40.0"
+  },
   "devDependencies": {
     "@playwright/test": "^1.49.0",
     "@types/node": "^22.10.1",

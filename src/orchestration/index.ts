@@ -1,13 +1,13 @@
 /**
- * Dependency-Aware Test Orchestration for Playwright
+ * Playwright Gatekeeper - Dependency-Aware Test Orchestration
  *
- * This module provides a lightweight dependency orchestration layer that allows
- * tests to declare dependencies on "gatekeeper" tests, automatically skipping
- * dependent tests when prerequisites fail.
+ * A lightweight orchestration layer that allows tests to declare dependencies
+ * on "gatekeeper" tests, automatically skipping dependent tests when
+ * prerequisites fail.
  *
  * @example
  * ```typescript
- * import { test, expect, markAs, dependsOn } from '../src/orchestration';
+ * import { test, expect, markAs, dependsOn } from 'playwright-gatekeeper';
  *
  * // Gatekeeper test
  * test('login works', async ({ page }) => {
@@ -18,14 +18,16 @@
  *
  * // Dependent test
  * test('dashboard loads', async ({ page }) => {
- *   dependsOn('auth');
+ *   await dependsOn('auth');
  *   await page.goto('/dashboard');
  *   // ... test assertions
  * });
  * ```
+ *
+ * @packageDocumentation
  */
 
-// Core test fixtures
+// Core test fixtures - use `test` for gatekeeper-aware tests
 export { test, expect, trackedTest, setupGatekeeperTracking } from './fixtures';
 
 // Helper functions for declaring dependencies
@@ -40,3 +42,8 @@ export {
   type StateFile,
   type FailedDependencyInfo,
 } from './testContext';
+
+// Re-export default reporter and setup paths for convenience
+// Users can reference these in their playwright.config.ts:
+//   globalSetup: require.resolve('playwright-gatekeeper/setup')
+//   reporter: [['playwright-gatekeeper/reporter']]
