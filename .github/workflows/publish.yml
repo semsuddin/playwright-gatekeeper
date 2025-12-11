@@ -4,15 +4,13 @@ on:
   release:
     types: [created]
 
+permissions:
+  id-token: write  # Required for OIDC trusted publishing
+  contents: read
+
 jobs:
   publish:
     runs-on: ubuntu-latest
-    # NPM_TOKEN must be a granular access token (not classic token, which were revoked Dec 2025)
-    # Create at: https://www.npmjs.com/settings/~/tokens
-    # Enable "Bypass 2FA" for CI/CD automation
-    # Alternative: Use OIDC trusted publishing (https://docs.npmjs.com/trusted-publishers)
-    env:
-      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
     steps:
       - uses: actions/checkout@v4
@@ -21,6 +19,9 @@ jobs:
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
+
+      - name: Update npm
+        run: npm install -g npm@latest
 
       - name: Install dependencies
         run: npm ci
