@@ -7,6 +7,9 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -21,7 +24,10 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Verify npm auth
+        run: |
+          echo "Authenticated as: $(npm whoami)"
+        # If this fails, the job will stop and logs will show the auth error.
+
       - name: Publish to npm
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public
