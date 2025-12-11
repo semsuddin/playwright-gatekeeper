@@ -29,11 +29,5 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Verify npm auth
-        run: |
-          set -e
-          npm whoami
-          echo "✓ OIDC authentication successful"
-
       - name: Publish to npm
         run: npm publish --access public
