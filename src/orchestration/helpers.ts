@@ -79,6 +79,9 @@ export async function dependsOn(
     return;
   }
 
+  // Add annotation for reporter to build dependency tree
+  test.info().annotations.push({ type: 'depends-on', description: keys.join(',') });
+
   const state = getGlobalState();
 
   // Wait for all dependencies to have results
