@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 import { getGlobalState, type FailedDependencyInfo } from './testContext';
 
-// Dependency orchestration helpers for Playwright tests
+// Dependency orchestration helpers for Playwright gatekeeper tests
 
 // Store the current test's gatekeeper key for auto-recording results
 let currentGatekeeperKey: string | null = null;
