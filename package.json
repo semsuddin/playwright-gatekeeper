@@ -1,6 +1,6 @@
 {
   "name": "playwright-gatekeeper",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Dependency-aware test orchestration layer for Playwright - skip tests when prerequisites fail",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
