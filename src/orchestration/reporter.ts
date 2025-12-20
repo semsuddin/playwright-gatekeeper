@@ -24,6 +24,7 @@ interface TestInfo {
 
 /**
  * Custom Playwright reporter that provides clear reporting on dependency-based skips
+ * Includes dependency tree visualization with multi-dependency and flaky test indicators
  */
 class DependencyReporter implements Reporter {
   private skippedTests: SkipInfo[] = [];
